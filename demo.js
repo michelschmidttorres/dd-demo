@@ -1,5 +1,4 @@
 const sdkToken = ''; //put your token here
-const sentryDsn = '';
 
 const { DocumentDetectorSdk: Sdk } = this['@combateafraude/document-detector'];
 const sdkContainer = document.getElementById('sdk-displayer');
@@ -16,7 +15,6 @@ const sdk = new Sdk({
         disableAnalytics: false,
         trackingId: undefined,
         trackingInfo: undefined,
-        sentryDataSourceName: sentryDsn,
     },
     environmentSettings: {
         disableDesktopExecution: false,
