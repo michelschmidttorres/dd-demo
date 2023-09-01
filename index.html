@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./demo.css">
+</head>
+
+<body>
+    <div id="container">
+        <div id="sdk-displayer">
+        </div>
+
+        <div class="form-container">
+            <select id="capture-type">
+                <option value="manual" selected>Manual</option>
+                <option value="automatic">Automática</option>
+            </select>
+
+            <select id="document-type">
+                <option value="cnh" selected>CNH</option>
+                <option value="rnm">RNM</option>
+                <option value="rg">RG</option>
+                <option value="crlv">CRLV</option>
+                <option value="rne">RNE</option>
+                <option value="passport">Passaporte</option>
+                <option value="ctps">CTPS</option>
+                <option value="other">Outro</option>
+                <option value="any">Qualquer um</option>
+            </select>
+
+            <select id="document-side">
+                <option value="both" selected>Ambos</option>
+                <option value="front">Frente</option>
+                <option value="back">Verso</option>
+            </select>
+
+            <select id="issued-country">
+                <option value="BR" selected>BR</option>
+                <option value="other">Other</option>
+            </select>
+
+            <button id="sdk-start" disabled>
+                Iniciar SDK
+            </button>
+        </div>
+
+        <div class="form-container">
+            <button id="copy-logs">
+                Copiar logs
+            </button>
+        </div>
+
+        <div id="console-displayer"></div>
+    </div>
+
+    <script>
+        const consoleDisplayer = document.getElementById('console-displayer');
+        const buttonCopyLogs = document.getElementById('copy-logs');
+        const oldConsoleDebug = window.console.debug;
+        const oldConsoleLog = window.console.log;
+        const oldConsoleWarn = window.console.warn;
+        const oldConsoleError = window.console.error;
+        const sdkLogs = [];
+
+        buttonCopyLogs.addEventListener('click', () => {
+            copyTextToClipboard(sdkLogs.join('\n'))
+        });
+
+        window.console.debug = function (message, ...params) {
+            consoleDisplayer.insertBefore(createParagraph(message, params, 'blue'), consoleDisplayer.firstChild);
+            oldConsoleDebug(message, ...params);
+        }
+
+        window.console.log = function (message, ...params) {
+            consoleDisplayer.insertBefore(createParagraph(message, params, 'black'), consoleDisplayer.firstChild);
+            oldConsoleLog(message, ...params);
+        }
+
+        window.console.warn = function (message, ...params) {
+            consoleDisplayer.insertBefore(createParagraph(message, params, 'orange'), consoleDisplayer.firstChild);
+            oldConsoleWarn(message, ...params);
+        }
+
+        window.console.error = function (message, ...params) {
+            consoleDisplayer.insertBefore(createParagraph(message, params, 'red'), consoleDisplayer.firstChild);
+            oldConsoleError(message, ...params);
+        }
+
+        function createParagraph(text, params, color) {
+            const content = `${text} ${JSON.stringify(params)}`;
+            const paragraph = document.createElement('p');
+
+            paragraph.innerHTML = content;
+            paragraph.style.margin = 0;
+            paragraph.style.padding = 0;
+            paragraph.style.marginBottom = '3px';
+            paragraph.style.color = color;
+
+            // Skip Sentry logs
+            if (!content.startsWith('The kernel') && !content.startsWith('Sentry')) {
+                sdkLogs.push(content);
+            }
+
+            return paragraph;
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+
+            // Avoid scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+
+                if (successful) {
+                    console.log('Copied logs to clipboard');
+                }
+                else {
+                    console.error('Could not copy logs');
+                }
+            }
+            catch (err) {
+                console.error('Could not copy logs: ', err);
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        function copyTextToClipboard(text) {
+            if (!navigator.clipboard) {
+                fallbackCopyTextToClipboard(text);
+                return;
+            }
+
+            navigator.clipboard.writeText(text).then(function () {
+                console.log('Copied logs to clipboard');
+            }, function (err) {
+                console.error('Could not copy logs: ', err);
+            });
+        }
+    </script>
+
+    <script src="https://repo.combateafraude.com/javascript/release/document-detector/5.10.1.umd.js"></script>
+    <script src="./demo.js"></script>
+</body>
+
+</html>

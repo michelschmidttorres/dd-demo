@@ -1,0 +1,47 @@
+html {
+    background-color: #333;
+    font-family: "Roboto", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+div#container {
+    position: relative;
+    margin: auto;
+
+    width: 80vw;
+    height: 80vh;
+    min-height: 400px;
+}
+
+div#sdk-displayer {
+    margin: 10px 0px;
+
+    width: 100%;
+    /* height: 60vw; */
+    height: 100%;
+
+    position: relative;
+    border: 2px dashed black;
+}
+
+#console-displayer {
+    background-color: gray;
+    margin: 10px 0px;
+    height: 20vw;
+    border: 1px solid black;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 5px;
+}
+
+#console-displayer p {
+    margin-top: 10px !important;
+}
+
+.form-container {
+    display: inline-block;
+}
+
+select, button, input {
+    padding: 2px 5px;
+    height: 30px;
+}
